@@ -131,7 +131,7 @@ export default function MusicPlayer() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-3">
@@ -145,134 +145,143 @@ export default function MusicPlayer() {
           <p className="text-slate-400">Audio control with precision timing</p>
         </div>
 
-        {/* Main Player Card */}
-        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <CardContent className="p-8 space-y-8">
-            {/* File Upload */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Upload className="w-5 h-5 text-purple-400" />
-                <Label htmlFor="audio-file" className="text-lg font-semibold text-slate-200">
-                  Audio File
-                </Label>
-              </div>
-              {!audioFile ? (
-                <div className="relative">
-                  <Input
-                    id="audio-file"
-                    type="file"
-                    accept="audio/*"
-                    onChange={handleFileUpload}
-                    ref={fileInputRef}
-                    className="hidden"
-                  />
-                  <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    variant="outline"
-                    className="w-full h-16 border-dashed border-2 border-slate-600 hover:border-purple-400 bg-slate-800/30 hover:bg-slate-700/50 text-slate-300"
-                  >
-                    <div className="flex flex-col items-center gap-2">
-                      <Upload className="w-6 h-6" />
-                      <span>Drop your audio file here or click to browse</span>
-                    </div>
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Music className="w-4 h-4 text-green-400" />
-                    <span className="text-slate-200 font-medium">{fileName}</span>
-                    <Badge variant="secondary" className="bg-green-500/20 text-green-400">
-                      Loaded
-                    </Badge>
-                  </div>
-                  <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    variant="ghost"
-                    size="sm"
-                    className="text-slate-400 hover:text-slate-200"
-                  >
-                    Change
-                  </Button>
-                  <Input
-                    id="audio-file"
-                    type="file"
-                    accept="audio/*"
-                    onChange={handleFileUpload}
-                    ref={fileInputRef}
-                    className="hidden"
-                  />
-                </div>
-              )}
-            </div>
-
-            {audioFile && (
-              <>
-                <audio ref={audioRef} src={audioFile} />
-
-                {/* Progress Section */}
+        {/* Horizontal Layout */}
+        <div className="grid grid-cols-3 gap-6">
+          {/* Left Column - Main Player */}
+          <div className="col-span-2 space-y-6">
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+              <CardContent className="p-6 space-y-6">
+                {/* File Upload */}
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-slate-400" />
-                      <span className="text-slate-300 font-mono">{formatTime(currentTime)}</span>
-                    </div>
-                    <div className="text-slate-400 font-mono">{formatTime(duration)}</div>
+                  <div className="flex items-center gap-2">
+                    <Upload className="w-5 h-5 text-purple-400" />
+                    <Label htmlFor="audio-file" className="text-lg font-semibold text-slate-200">
+                      Audio File
+                    </Label>
                   </div>
-
-                  {/* Enhanced Progress Bar */}
-                  <div className="relative">
-                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-150"
-                        style={{ width: `${getProgressPercentage()}%` }}
+                  {!audioFile ? (
+                    <div className="relative">
+                      <Input
+                        id="audio-file"
+                        type="file"
+                        accept="audio/*"
+                        onChange={handleFileUpload}
+                        ref={fileInputRef}
+                        className="hidden"
+                      />
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        variant="outline"
+                        className="w-full h-16 border-dashed border-2 border-slate-600 hover:border-purple-400 bg-slate-800/30 hover:bg-slate-700/50 text-slate-300"
+                      >
+                        <div className="flex flex-col items-center gap-2">
+                          <Upload className="w-6 h-6" />
+                          <span>Drop your audio file here or click to browse</span>
+                        </div>
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Music className="w-4 h-4 text-green-400" />
+                        <span className="text-slate-200 font-medium">{fileName}</span>
+                        <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                          Loaded
+                        </Badge>
+                      </div>
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        variant="ghost"
+                        size="sm"
+                        className="text-slate-400 hover:text-slate-200"
+                      >
+                        Change
+                      </Button>
+                      <Input
+                        id="audio-file"
+                        type="file"
+                        accept="audio/*"
+                        onChange={handleFileUpload}
+                        ref={fileInputRef}
+                        className="hidden"
                       />
                     </div>
-                    <Slider
-                      value={[currentTime]}
-                      max={duration}
-                      step={0.1}
-                      onValueChange={handleSeek}
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                    />
-                  </div>
+                  )}
                 </div>
 
-                {/* Main Controls */}
-                <div className="flex items-center justify-center gap-6">
-                  <Button
-                    onClick={resetPosition}
-                    variant="outline"
-                    size="lg"
-                    className="border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300"
-                  >
-                    <RotateCcw className="w-5 h-5" />
-                  </Button>
+                {audioFile && (
+                  <>
+                    <audio ref={audioRef} src={audioFile} />
 
-                  <Button
-                    onClick={togglePlayPause}
-                    size="lg"
-                    className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/25"
-                  >
-                    {isPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
-                  </Button>
+                    {/* Progress Section */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-slate-400" />
+                          <span className="text-slate-300 font-mono text-lg">{formatTime(currentTime)}</span>
+                        </div>
+                        <div className="text-slate-400 font-mono text-lg">{formatTime(duration)}</div>
+                      </div>
 
-                  <Button
-                    onClick={() => setIsLooping(!isLooping)}
-                    variant={isLooping ? "default" : "outline"}
-                    size="lg"
-                    className={
-                      isLooping
-                        ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-                        : "border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300"
-                    }
-                  >
-                    <Repeat className="w-5 h-5" />
-                  </Button>
-                </div>
+                      {/* Enhanced Progress Bar */}
+                      <div className="relative">
+                        <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-150"
+                            style={{ width: `${getProgressPercentage()}%` }}
+                          />
+                        </div>
+                        <Slider
+                          value={[currentTime]}
+                          max={duration}
+                          step={0.1}
+                          onValueChange={handleSeek}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                      </div>
+                    </div>
 
-                {/* Speed Control Section */}
-                <div className="space-y-6 p-6 bg-slate-700/30 rounded-xl border border-slate-600/50">
+                    {/* Main Controls */}
+                    <div className="flex items-center justify-center gap-8 py-4">
+                      <Button
+                        onClick={resetPosition}
+                        variant="outline"
+                        size="lg"
+                        className="border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300"
+                      >
+                        <RotateCcw className="w-6 h-6" />
+                      </Button>
+
+                      <Button
+                        onClick={togglePlayPause}
+                        size="lg"
+                        className="w-24 h-24 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/25"
+                      >
+                        {isPlaying ? <Pause className="w-10 h-10" /> : <Play className="w-10 h-10 ml-1" />}
+                      </Button>
+
+                      <Button
+                        onClick={() => setIsLooping(!isLooping)}
+                        variant={isLooping ? "default" : "outline"}
+                        size="lg"
+                        className={
+                          isLooping
+                            ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                            : "border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300"
+                        }
+                      >
+                        <Repeat className="w-6 h-6" />
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Speed Control Section */}
+            {audioFile && (
+              <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+                <CardContent className="p-6 space-y-6">
                   <div className="flex items-center gap-3">
                     <Volume2 className="w-5 h-5 text-purple-400" />
                     <h3 className="text-xl font-semibold text-slate-200">Playback Speed</h3>
@@ -318,101 +327,107 @@ export default function MusicPlayer() {
                       </Button>
                     ))}
                   </div>
-                </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
 
-                {/* Loop Controls */}
-                <Card className="bg-slate-700/30 border-slate-600/50">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-xl flex items-center gap-3 text-slate-200">
-                      <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg">
-                        <Repeat className="w-5 h-5 text-white" />
-                      </div>
-                      Loop Section Control
+          {/* Right Column - Loop Controls */}
+          {audioFile && (
+            <div className="col-span-1">
+              <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm h-full">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl flex items-center gap-3 text-slate-200">
+                    <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg">
+                      <Repeat className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div>Loop Control</div>
                       {isLooping && (
-                        <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Active</Badge>
+                        <Badge className="bg-green-500/20 text-green-400 border-green-500/30 mt-1">Active</Badge>
                       )}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <Label className="text-slate-300 font-medium">
-                          Loop Start: <span className="font-mono text-green-400">{formatTime(loopStart)}</span>
-                        </Label>
-                        <Button
-                          onClick={setLoopStartToCurrent}
-                          variant="outline"
-                          className="w-full border-slate-600 bg-slate-800/30 hover:bg-slate-700/50 text-slate-300"
-                        >
-                          Set Current as Start
-                        </Button>
-                      </div>
-                      <div className="space-y-3">
-                        <Label className="text-slate-300 font-medium">
-                          Loop End: <span className="font-mono text-green-400">{formatTime(loopEnd)}</span>
-                        </Label>
-                        <Button
-                          onClick={setLoopEndToCurrent}
-                          variant="outline"
-                          className="w-full border-slate-600 bg-slate-800/30 hover:bg-slate-700/50 text-slate-300"
-                        >
-                          Set Current as End
-                        </Button>
-                      </div>
                     </div>
-
-                    <div className="space-y-4">
-                      <Label className="text-slate-300 font-medium">Loop Range Sliders</Label>
-                      <div className="space-y-3">
-                        <div>
-                          <div className="flex justify-between text-xs text-slate-400 mb-1">
-                            <span>Start</span>
-                            <span>{formatTime(loopStart)}</span>
-                          </div>
-                          <Slider
-                            value={[loopStart]}
-                            max={duration}
-                            step={0.1}
-                            onValueChange={(value) => setLoopStart(value[0])}
-                            className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-green-500 [&_[role=slider]]:to-emerald-500 [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-green-500 [&_.bg-primary]:to-emerald-500"
-                          />
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-xs text-slate-400 mb-1">
-                            <span>End</span>
-                            <span>{formatTime(loopEnd)}</span>
-                          </div>
-                          <Slider
-                            value={[loopEnd]}
-                            max={duration}
-                            step={0.1}
-                            onValueChange={(value) => setLoopEnd(value[0])}
-                            className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-green-500 [&_[role=slider]]:to-emerald-500 [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-green-500 [&_.bg-primary]:to-emerald-500"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
-                      <Label className="text-slate-300 font-medium">Enable Loop</Label>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="space-y-3">
+                      <Label className="text-slate-300 font-medium">
+                        Loop Start: <span className="font-mono text-green-400">{formatTime(loopStart)}</span>
+                      </Label>
                       <Button
-                        onClick={() => setIsLooping(!isLooping)}
-                        variant={isLooping ? "default" : "outline"}
-                        className={
-                          isLooping
-                            ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-                            : "border-slate-600 bg-slate-800/30 hover:bg-slate-700/50 text-slate-300"
-                        }
+                        onClick={setLoopStartToCurrent}
+                        variant="outline"
+                        className="w-full border-slate-600 bg-slate-800/30 hover:bg-slate-700/50 text-slate-300"
                       >
-                        {isLooping ? "ON" : "OFF"}
+                        Set Current as Start
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
-          </CardContent>
-        </Card>
+                    <div className="space-y-3">
+                      <Label className="text-slate-300 font-medium">
+                        Loop End: <span className="font-mono text-green-400">{formatTime(loopEnd)}</span>
+                      </Label>
+                      <Button
+                        onClick={setLoopEndToCurrent}
+                        variant="outline"
+                        className="w-full border-slate-600 bg-slate-800/30 hover:bg-slate-700/50 text-slate-300"
+                      >
+                        Set Current as End
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <Label className="text-slate-300 font-medium">Loop Range Sliders</Label>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-xs text-slate-400 mb-2">
+                          <span>Start</span>
+                          <span>{formatTime(loopStart)}</span>
+                        </div>
+                        <Slider
+                          value={[loopStart]}
+                          max={duration}
+                          step={0.1}
+                          onValueChange={(value) => setLoopStart(value[0])}
+                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-green-500 [&_[role=slider]]:to-emerald-500 [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-green-500 [&_.bg-primary]:to-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-xs text-slate-400 mb-2">
+                          <span>End</span>
+                          <span>{formatTime(loopEnd)}</span>
+                        </div>
+                        <Slider
+                          value={[loopEnd]}
+                          max={duration}
+                          step={0.1}
+                          onValueChange={(value) => setLoopEnd(value[0])}
+                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-green-500 [&_[role=slider]]:to-emerald-500 [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-green-500 [&_.bg-primary]:to-emerald-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
+                    <Label className="text-slate-300 font-medium">Enable Loop</Label>
+                    <Button
+                      onClick={() => setIsLooping(!isLooping)}
+                      variant={isLooping ? "default" : "outline"}
+                      className={
+                        isLooping
+                          ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                          : "border-slate-600 bg-slate-800/30 hover:bg-slate-700/50 text-slate-300"
+                      }
+                    >
+                      {isLooping ? "ON" : "OFF"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
