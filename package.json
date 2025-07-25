@@ -1,10 +1,10 @@
 {
-  "name": "my-v0-project",
+  "name": "web-music-player",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "next build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "next build && touch dist/.nojekyll && gh-pages -d dist",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start"
