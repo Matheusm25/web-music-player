@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Play, Pause, RotateCcw, Upload, Repeat, Music, Volume2, Clock } from "lucide-react"
+import { Play, Pause, RotateCcw, Upload, Repeat, Music, Volume2, Clock, SkipBack, SkipForward } from "lucide-react"
 
 export default function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -19,6 +19,7 @@ export default function MusicPlayer() {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [playbackRate, setPlaybackRate] = useState(1)
+  const [volume, setVolume] = useState(1)
   const [audioFile, setAudioFile] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string>("")
 
@@ -60,6 +61,13 @@ export default function MusicPlayer() {
     audio.addEventListener("timeupdate", checkLoop)
     return () => audio.removeEventListener("timeupdate", checkLoop)
   }, [isLooping, loopStart, loopEnd])
+
+  // Handle volume changes
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.volume = volume
+  }, [volume])
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -103,6 +111,15 @@ export default function MusicPlayer() {
     setPlaybackRate(rate)
   }
 
+  const handleVolumeChange = (value: number[]) => {
+    setVolume(value[0])
+  }
+
+  const handleLoopRangeChange = (value: number[]) => {
+    setLoopStart(value[0])
+    setLoopEnd(value[1])
+  }
+
   const setLoopStartToCurrent = () => {
     setLoopStart(currentTime)
   }
@@ -117,6 +134,22 @@ export default function MusicPlayer() {
 
     audio.currentTime = 0
     setCurrentTime(0)
+  }
+
+  const skipBackward = () => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    audio.currentTime = Math.max(0, audio.currentTime - 10)
+    setCurrentTime(audio.currentTime)
+  }
+
+  const skipForward = () => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    audio.currentTime = Math.min(duration, audio.currentTime + 10)
+    setCurrentTime(audio.currentTime)
   }
 
   const formatTime = (time: number) => {
@@ -278,16 +311,35 @@ export default function MusicPlayer() {
                   </div>
 
                   {/* Main Controls */}
-                  <div className="flex items-center justify-center gap-4 sm:gap-8 py-2 sm:py-4">
+                  <div className="flex items-center justify-center gap-3 sm:gap-4 py-2 sm:py-4">
+                    {/* Loop Button */}
                     <Button
-                      onClick={resetPosition}
-                      variant="outline"
+                      onClick={() => setIsLooping(!isLooping)}
+                      variant={isLooping ? "default" : "outline"}
                       size="lg"
-                      className="border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300 w-12 h-12 sm:w-auto sm:h-auto"
+                      className={
+                        isLooping
+                          ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 w-12 h-12 sm:w-16 sm:h-16"
+                          : "border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300 w-12 h-12 sm:w-16 sm:h-16"
+                      }
                     >
-                      <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <Repeat className="w-5 h-5 sm:w-6 sm:h-6" />
                     </Button>
 
+                    {/* Skip Backward 10s */}
+                    <Button
+                      onClick={skipBackward}
+                      variant="outline"
+                      size="lg"
+                      className="border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300 w-12 h-12 sm:w-16 sm:h-16"
+                    >
+                      <div className="flex flex-col items-center">
+                        <SkipBack className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="text-xs">10s</span>
+                      </div>
+                    </Button>
+
+                    {/* Play/Pause Button */}
                     <Button
                       onClick={togglePlayPause}
                       size="lg"
@@ -300,18 +352,56 @@ export default function MusicPlayer() {
                       )}
                     </Button>
 
+                    {/* Skip Forward 10s */}
                     <Button
-                      onClick={() => setIsLooping(!isLooping)}
-                      variant={isLooping ? "default" : "outline"}
+                      onClick={skipForward}
+                      variant="outline"
                       size="lg"
-                      className={
-                        isLooping
-                          ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 w-12 h-12 sm:w-auto sm:h-auto"
-                          : "border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300 w-12 h-12 sm:w-auto sm:h-auto"
-                      }
+                      className="border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300 w-12 h-12 sm:w-16 sm:h-16"
                     >
-                      <Repeat className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <div className="flex flex-col items-center">
+                        <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="text-xs">10s</span>
+                      </div>
                     </Button>
+
+                    {/* Reset/Replay Button */}
+                    <Button
+                      onClick={resetPosition}
+                      variant="outline"
+                      size="lg"
+                      className="border-slate-600 bg-slate-800/50 hover:bg-slate-700 text-slate-300 w-12 h-12 sm:w-16 sm:h-16"
+                    >
+                      <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </Button>
+                  </div>
+
+                  {/* Volume Control */}
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+                      <Label className="text-sm sm:text-base font-medium text-slate-200">Volume</Label>
+                      <Badge variant="secondary" className="bg-slate-500/20 text-slate-300 text-xs">
+                        {Math.round(volume * 100)}%
+                      </Badge>
+                    </div>
+                    <div className="relative">
+                      <Slider
+                        value={[volume]}
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        onValueChange={handleVolumeChange}
+                        className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-purple-500 [&_[role=slider]]:to-pink-500 [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-purple-500 [&_.bg-primary]:to-pink-500"
+                      />
+                    </div>
+                    <div className="flex justify-between text-xs text-slate-400">
+                      <span>0%</span>
+                      <span>25%</span>
+                      <span>50%</span>
+                      <span>75%</span>
+                      <span>100%</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -378,11 +468,6 @@ export default function MusicPlayer() {
                     </div>
                     <div>
                       <div>Loop Control</div>
-                      {isLooping && (
-                        <Badge className="bg-green-500/20 text-green-400 border-green-500/30 mt-1 text-xs">
-                          Active
-                        </Badge>
-                      )}
                     </div>
                   </CardTitle>
                 </CardHeader>
@@ -415,33 +500,24 @@ export default function MusicPlayer() {
                   </div>
 
                   <div className="space-y-3 sm:space-y-4">
-                    <Label className="text-slate-300 font-medium text-sm sm:text-base">Loop Range Sliders</Label>
-                    <div className="space-y-3 sm:space-y-4">
-                      <div>
-                        <div className="flex justify-between text-xs text-slate-400 mb-2">
-                          <span>Start</span>
-                          <span>{formatTime(loopStart)}</span>
-                        </div>
+                    <Label className="text-slate-300 font-medium text-sm sm:text-base">Loop Range</Label>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs text-slate-400">
+                        <span>Start: {formatTime(loopStart)}</span>
+                        <span>End: {formatTime(loopEnd)}</span>
+                      </div>
+                      <div className="relative">
                         <Slider
-                          value={[loopStart]}
+                          value={[loopStart, loopEnd]}
                           max={duration}
                           step={0.1}
-                          onValueChange={(value) => setLoopStart(value[0])}
-                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-green-500 [&_[role=slider]]:to-emerald-500 [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-green-500 [&_.bg-primary]:to-emerald-500"
+                          onValueChange={handleLoopRangeChange}
+                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-purple-500 [&_[role=slider]]:to-pink-500 [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-purple-500 [&_.bg-primary]:to-pink-500"
                         />
                       </div>
-                      <div>
-                        <div className="flex justify-between text-xs text-slate-400 mb-2">
-                          <span>End</span>
-                          <span>{formatTime(loopEnd)}</span>
-                        </div>
-                        <Slider
-                          value={[loopEnd]}
-                          max={duration}
-                          step={0.1}
-                          onValueChange={(value) => setLoopEnd(value[0])}
-                          className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-green-500 [&_[role=slider]]:to-emerald-500 [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-green-500 [&_.bg-primary]:to-emerald-500"
-                        />
+                      <div className="flex justify-between text-xs text-slate-400">
+                        <span>0:00</span>
+                        <span>{formatTime(duration)}</span>
                       </div>
                     </div>
                   </div>
